@@ -68,21 +68,24 @@ namespace CRUDEmployee.Services
         public void UpdateEmployee(Employee updatedEmployee)
         {
             if (updatedEmployee == null)
-                throw new ArgumentNullException(nameof(updatedEmployee), "Updated employee cannot be null.");
+                throw new ArgumentNullException(nameof(updatedEmployee));
 
             if (string.IsNullOrWhiteSpace(updatedEmployee.EmployeeID))
                 throw new ArgumentException("EmployeeID is required.");
 
-            var employee = _employees.FirstOrDefault(e => e.EmployeeID == updatedEmployee.EmployeeID);
-            if (employee == null)
-                throw new KeyNotFoundException($"Employee with ID '{updatedEmployee.EmployeeID}' not found.");
-
             if (string.IsNullOrWhiteSpace(updatedEmployee.FullName))
                 throw new ArgumentException("FullName cannot be null or empty.");
+
+            var employee = _employees.FirstOrDefault(e => e.EmployeeID == updatedEmployee.EmployeeID);
+            if (employee == null)
+            {
+                throw new KeyNotFoundException("Employee not found.");
+            }
 
             employee.FullName = updatedEmployee.FullName;
             employee.BirthDate = updatedEmployee.BirthDate;
         }
+
 
 
         // Delete employee by ID

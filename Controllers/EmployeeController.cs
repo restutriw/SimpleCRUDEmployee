@@ -101,7 +101,10 @@ namespace CRUDEmployee.Controllers
         public IActionResult UpdateEmployee(string id, [FromBody] UpdateEmployeeDTO updatedEmployeeRequest)
         {
             if (updatedEmployeeRequest == null)
-                return BadRequest(new { Message = "Employee data is required." });
+                return BadRequest(new { Message = "Request body cannot be null." });
+
+            if (string.IsNullOrWhiteSpace(updatedEmployeeRequest.FullName))
+                return BadRequest(new { Message = "FullName cannot be null or empty." });
 
             try
             {
@@ -110,8 +113,8 @@ namespace CRUDEmployee.Controllers
                 if (existingEmployee == null)
                     return NotFound(new { Message = "Employee not found." });
 
-                // Update fields
-                existingEmployee.FullName = updatedEmployeeRequest.FullName ?? existingEmployee.FullName;
+                // Update data
+                existingEmployee.FullName = updatedEmployeeRequest.FullName;
                 existingEmployee.BirthDate = !string.IsNullOrEmpty(updatedEmployeeRequest.BirthDate)
                     ? ParseDate(updatedEmployeeRequest.BirthDate)
                     : existingEmployee.BirthDate;
@@ -129,6 +132,7 @@ namespace CRUDEmployee.Controllers
                 return BadRequest(new { Message = "An error occurred: " + ex.Message });
             }
         }
+
 
         // Delete employee by ID
         [HttpDelete("{id}")]
